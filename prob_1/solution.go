@@ -39,18 +39,18 @@ func answerQestions(file []byte) (res int) {
 	r := csv.NewReader(strings.NewReader(string(file)))
 	for {
 		record, err := r.Read()
-		answer := make(chan bool)
+		answer := make(chan string)
 		if err == io.EOF {
 			return
 		}
-		var input string
 		go func() {
+			var input string
 			fmt.Println(record[0])
 			fmt.Scanln(&input)
-			answer <- true
+			answer <- input
 		}()
 		select {
-		case <-answer:
+		case input := <-answer:
 			if record[1] == input {
 				res++
 			}
